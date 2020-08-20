@@ -7,3 +7,14 @@ https://data.sfgov.org/Economy-and-Community/Mobile-Food-Facility-Permit/rqzj-sf
 
 note:
 language: 
+
+1- 
+install homebrew (https://brew.sh/index_sv)
+install node (brew install node)
+install gatsby ((sudo) npm install --global gatsby-cli)
+
+2- 
+Frontend:
+React
+Gatsby
+
