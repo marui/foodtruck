@@ -1,0 +1,22 @@
+{
+  "name": "foodtruck",
+  "version": "1.0.0",
+  "description": "app wireframe: https://video.com/448235674",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/marui/foodtruck.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/marui/foodtruck/issues"
+  },
+  "homepage": "https://github.com/marui/foodtruck#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
