@@ -7,8 +7,8 @@ app.listen(3000, () => {
 app.get("/areas", (req, res, next) => {
   let areaname = req.query.name;
 let areas = [
-  {'name':"Södermalm",'keyword':"hipster"},
-  {'name':"ostermalm",'keyword':"douche bag"},
+  {'name':"södermalm",'keyword':"hipster"},
+  {'name':"östermalm",'keyword':"douche bag"},
   {'name':"gamlastan",'keyword':"old town"}]
 
  // res.json(areas);
@@ -20,8 +20,8 @@ res.json(results);
 app.get("/addresses", (req, res, next) => {
   let areaname = req.query.name;
 let areas = [
-  {'name':"Södermalm",'keyword':"hipster"},
-  {'name':"ostermalm",'keyword':"douche bag"},
+  {'name':"södermalm",'keyword':"hipster"},
+  {'name':"östermalm",'keyword':"douche bag"},
   {'name':"gamlastan",'keyword':"old town"}]
 
  // res.json(areas);
