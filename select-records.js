@@ -1,4 +1,4 @@
-const { Pool, Client } = require("pg");
+const { Pool } = require("pg");
 
 const pool = new Pool({
   user: "wanderlust",
@@ -7,6 +7,7 @@ const pool = new Pool({
   password: "",
   port: "5432"
 });
+
 
 pool.query("SELECT * from truck_data WHERE area='vasastan' ", (err, res) => {
   console.log(err, res);
