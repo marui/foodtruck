@@ -6,30 +6,29 @@ app.listen(3000, () => {
  console.log("Server running on port 3000");
 });
 
-app.get("/areas", (req, res, next) => {
-  let areaname = req.query.name;
-let areas = [
-  {'name':"södermalm",'keyword':"hipster"},
-  {'name':"östermalm",'keyword':"douche bag"},
-  {'name':"gamlastan",'keyword':"old town"}]
+// app.get("/areas", (req, res, next) => {
+//   let areaname = req.query.name;
+// let areas = [
+//   {'name':"södermalm",'keyword':"hipster"},
+//   {'name':"östermalm",'keyword':"douche bag"},
+//   {'name':"gamlastan",'keyword':"old town"}]
 
- // res.json(areas);
-let results = areas.filter(area => area.name === areaname)
+//  // res.json(areas);
+// let results = areas.filter(area => area.name === areaname)
 
-res.json(results);
+// res.json(results);
+// });
+const pool = new Pool({
+  user: "wanderlust",
+  host: "localhost",
+  database: "foodtruck_database",
+  password: "",
+  port: "5432"
 });
-
 
 app.get("/locations", (req, res, next) => {
    areaname = req.query.name;
   // console.log("1");
-   const pool = new Pool({
-    user: "wanderlust",
-    host: "localhost",
-    database: "foodtruck_database",
-    password: "",
-    port: "5432"
-  });
 
   ;(async function() {
     const client = await pool.connect()
@@ -48,14 +47,14 @@ app.get("/locations", (req, res, next) => {
 
 app.get("/trucks", (req, res, next) =>{
 truckid = req.query.truckid;
-const pool = new Pool({
-  user: "wanderlust",
-    host: "localhost",
-    database: "foodtruck_database",
-    password: "",
-    port: "5432"
+// const pool = new Pool({
+//   user: "wanderlust",
+//     host: "localhost",
+//     database: "foodtruck_database",
+//     password: "",
+//     port: "5432"
 
-});
+// });
 
 ;(async function(){
   const client = await pool.connect()
