@@ -51,7 +51,7 @@ app.get("/trucks", (req, res, next) =>{
   truckaddress = req.query.address;
   //console.log(truckid);
   if (truckid) {
-    console.log("0");
+   // console.log("0");
     ;(async function(){
       const client = await pool.connect()
       const query = 'SELECT * FROM truck_data WHERE truckid = $1'
@@ -65,21 +65,46 @@ app.get("/trucks", (req, res, next) =>{
     })()
   } 
   else {
-  console.log(truckaddress);
-  console.log("1");
-
+  //console.log(truckaddress);
+  //console.log("1");
   var mapclient = new MapboxClient('pk.eyJ1IjoibWFwYm94c2giLCJhIjoiY2tlbnpzbmRxM2V3NjJ6bHQ0OGN6YmVzdiJ9.NrMbCzbdfJNuVJauavvztA');
 
   mapclient.geocodeForward(truckaddress).then(function(response){
     data = response.entity;
    // console.log(data);
     var trucklocation_center = data.features[0].center;
-  res.json(trucklocation_center);
-  //console.log(truckaddress);
+    var area_longtitudemin = trucklocation_center[0]-0.1;
+    var area_latitudemin = trucklocation_center[1]-0.1;
+    var area_longtitudemax = trucklocation_center[0]+0.1;
+    var area_latitudemax = trucklocation_center[1]+0.1;
+  console.log("trucklocation_center=");
+   console.log(trucklocation_center);
+    //console.log(area_lantitudemin);
+
+     async function trucklist(){
+       const client = await pool.connect()
+       const values = [area_longtitudemin, area_longtitudemax, area_latitudemin, area_latitudemax]
+       const query = 'SELECT * FROM truck_data WHERE longtitude BETWEEN $1 AND $2 AND latitude BETWEEN $3 AND $4'
+      // const truckinformation = await client.query(query, value_longtitudemin, value_longtitudemax, value_lantitudemin, value_lantitudemax)
+       const truckinformation = await client.query(query, values)
+       
+       const trucklistinthearea = truckinformation.rows.map(truck => {
+          return {"truckid": truck.truckid, 'truckname': truck.truckname, "menu": truck.menu, "opentime": truck.opentime, "closetime": truck.closetime, "foodtype": truck.foodtype, "vegan": truck.vegan};
+         })
+         res.json(trucklistinthearea)
+         console.log("truckinformation")
+         console.log(trucklistinthearea)
+         client.release()
+     };
+     trucklist();
+
   });
   }
 
 });
+
+
+
 
 // app.get("/trucks", (req, res2, next) =>{
 //   truckaddress = req.query.address;
