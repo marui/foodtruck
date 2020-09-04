@@ -19,25 +19,29 @@ let results = areas.filter(area => area.name === areaname)
 res.json(results);
 });
 
-const pool = new Pool({
-  user: "wanderlust",
-  host: "localhost",
-  database: "foodtruck_database",
-  password: "",
-  port: "5432"
-});
 
-app.get("/areas", (req, res, next) => {
-  areaname = req.query.name;
- 
-  async function getTruckinArea(areaname) {
+app.get("/locations", (req, res, next) => {
+   areaname = req.query.name;
+   console.log("1");
+   const pool = new Pool({
+    user: "wanderlust",
+    host: "localhost",
+    database: "foodtruck_database",
+    password: "",
+    port: "5432"
+  });
 
-    const trucklist = await pool.query('SELECT * from truck_data WHERE area= ?', areaname);
-    if (!trucklist[0].length < 1){
-       throw new Error('There is no truck available in this area');
-    }
-  return trucklist[0][0];
-  
-  }
+  ;(async function() {
+    const client = await pool.connect()
+    const query = 'SELECT * FROM truck_data WHERE area = $1'
+    const value = [areaname]
+    const trucklist = await client.query(query, value)
+    const newtrucklist = trucklist.rows.map(truck => {
+      return {"truckid":truck.truckid, 'truckname':truck.truckname };
+    })
+    res.json(newtrucklist)
+    client.release()
+  })()
+
 
 });
