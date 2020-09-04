@@ -22,7 +22,7 @@ res.json(results);
 
 app.get("/locations", (req, res, next) => {
    areaname = req.query.name;
-   console.log("1");
+  // console.log("1");
    const pool = new Pool({
     user: "wanderlust",
     host: "localhost",
@@ -45,3 +45,29 @@ app.get("/locations", (req, res, next) => {
 
 
 });
+
+app.get("/trucks", (req, res, next) =>{
+truckid = req.query.truckid;
+const pool = new Pool({
+  user: "wanderlust",
+    host: "localhost",
+    database: "foodtruck_database",
+    password: "",
+    port: "5432"
+
+});
+
+;(async function(){
+  const client = await pool.connect()
+  const query = 'SELECT * FROM truck_data WHERE truckid = $1'
+  const value = [truckid]
+  const truckinformation = await client.query(query, value)
+  const newtruckinformation = truckinformation.rows.map(truck => {
+    return {"truckid": truck.truckid, 'truckname': truck.truckname, "menu": truck.menu, "opentime": truck.opentime, "closetime": truck.closetime, "foodtype": truck.foodtype, "vegan": truck.vegan};
+  })
+res.json(newtruckinformation)
+client.release()
+})()
+
+});
+
