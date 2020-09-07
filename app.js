@@ -19,6 +19,7 @@ app.listen(3000, () => {
 
 // res.json(results);
 // });
+
 const pool = new Pool({
   user: "wanderlust",
   host: "localhost",
@@ -46,25 +47,54 @@ app.get("/locations", (req, res, next) => {
 
 });
 
+async function func_getDistance(lat1, long1, lat2, long2){
+  var R = 6371; // km
+  var dLat = (lat2-lat1) * (Math.PI/180);;
+  var dLon = (long2-long1) * (Math.PI/180);;
+  var lat1 = lat1 * (Math.PI/180);;
+  var lat2 = lat2 * (Math.PI/180);;
+
+  var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+    Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2); 
+  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+  var distance = R * c;
+  console.log(distance + " km");
+  return distance;
+};
+// func_getDistance(18.05,59,18,59);
+
 app.get("/trucks", (req, res, next) =>{
   truckid = req.query.truckid;
   truckaddress = req.query.address;
-  //console.log(truckid);
+  // truckvegan = req.query.vegan;
+  // console.log(truckid);
+
   if (truckid) {
    // console.log("0");
-    ;(async function(){
-      const client = await pool.connect()
-      const query = 'SELECT * FROM truck_data WHERE truckid = $1'
-      const value = [truckid]
-      const truckinformation = await client.query(query, value)
-      const newtruckinformation = truckinformation.rows.map(truck => {
-        return {"truckid": truck.truckid, 'truckname': truck.truckname, "menu": truck.menu, "opentime": truck.opentime, "closetime": truck.closetime, "foodtype": truck.foodtype, "vegan": truck.vegan};
-      })
+    // ;(async function(){
+    //   const client = await pool.connect()
+    //   const query = 'SELECT * FROM truck_data WHERE truckid = $1'
+    //   const value = [truckid]
+    //   const truckinformation = await client.query(query, value)
+    //   const newtruckinformation = truckinformation.rows.map(truck => {
+    //     return {"truckid": truck.truckid, 'truckname': truck.truckname, "menu": truck.menu, "opentime": truck.opentime, "closetime": truck.closetime, "foodtype": truck.foodtype, "vegan": truck.vegan};
+    //   })
+    // res.json(newtruckinformation)
+    // client.release()
+    // })()
+async function func_truckInformation(){
+  const client = await pool.connect()
+    const query = 'SELECT * FROM truck_data WHERE truckid = $1'
+    const value = [truckid]
+    const truckinformation = await client.query(query, value)
+    const newtruckinformation = truckinformation.rows.map(truck => {
+      return {"truckid": truck.truckid, 'truckname': truck.truckname, "menu": truck.menu, "opentime": truck.opentime, "closetime": truck.closetime, "foodtype": truck.foodtype, "vegan": truck.vegan};
+    })
     res.json(newtruckinformation)
     client.release()
-    })()
-  } 
-  else {
+  };
+  func_truckInformation();
+  } else if (truckaddress){
   //console.log(truckaddress);
   //console.log("1");
   var mapclient = new MapboxClient('pk.eyJ1IjoibWFwYm94c2giLCJhIjoiY2tlbnpzbmRxM2V3NjJ6bHQ0OGN6YmVzdiJ9.NrMbCzbdfJNuVJauavvztA');
@@ -73,30 +103,33 @@ app.get("/trucks", (req, res, next) =>{
     data = response.entity;
    // console.log(data);
     var trucklocation_center = data.features[0].center;
-    var area_longtitudemin = trucklocation_center[0]-0.1;
-    var area_latitudemin = trucklocation_center[1]-0.1;
-    var area_longtitudemax = trucklocation_center[0]+0.1;
-    var area_latitudemax = trucklocation_center[1]+0.1;
-  console.log("trucklocation_center=");
-   console.log(trucklocation_center);
+    var area_longitudemin = trucklocation_center[0]-0.0699;
+    var area_latitudemin = trucklocation_center[1]-0.0699;
+    var area_longitudemax = trucklocation_center[0]+0.0699;
+    var area_latitudemax = trucklocation_center[1]+0.0699;
+   // console.log("trucklocation_center=");
+  // console.log(trucklocation_center);
     //console.log(area_lantitudemin);
 
-     async function trucklist(){
+     async function func_truckList(){
        const client = await pool.connect()
-       const values = [area_longtitudemin, area_longtitudemax, area_latitudemin, area_latitudemax]
+       const values = [area_longitudemin, area_longitudemax, area_latitudemin, area_latitudemax]
        const query = 'SELECT * FROM truck_data WHERE longtitude BETWEEN $1 AND $2 AND latitude BETWEEN $3 AND $4'
-      // const truckinformation = await client.query(query, value_longtitudemin, value_longtitudemax, value_lantitudemin, value_lantitudemax)
+      // const truckinformation = await client.query(query, value_longitudemin, value_longitudemax, value_lantitudemin, value_lantitudemax)
        const truckinformation = await client.query(query, values)
-       
+       var distance = distance
+
        const trucklistinthearea = truckinformation.rows.map(truck => {
-          return {"truckid": truck.truckid, 'truckname': truck.truckname, "menu": truck.menu, "opentime": truck.opentime, "closetime": truck.closetime, "foodtype": truck.foodtype, "vegan": truck.vegan};
+          return {"truckid": truck.truckid, 'truckname': truck.truckname, "menu": truck.menu, "opentime": truck.opentime, "closetime": truck.closetime, "longitude": truck.longtitude, "latitude": truck.latitude, "foodtype": truck.foodtype, "vegan": truck.vegan, "distance": distance};
          })
          res.json(trucklistinthearea)
-         console.log("truckinformation")
-         console.log(trucklistinthearea)
+         console.log("my location:")
+         console.log(trucklocation_center)
+         // console.log("truckinformation:")
+         // console.log(trucklistinthearea)
          client.release()
      };
-     trucklist();
+     func_truckList();
 
   });
   }
@@ -133,7 +166,7 @@ app.get("/trucks", (req, res, next) =>{
 //       // res is the http response, including: status, headers and entity properties
 //  var data = res.entity; // data is the geocoding result as parsed JSON
 // //console.log("0");
-// var longtitude = data.features[0].center[0];
+// var longitude = data.features[0].center[0];
 // var latitude = data.features[0].center[1];
 // var trucklocation_center = data.features[0].center;
 
