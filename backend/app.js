@@ -1,10 +1,11 @@
+/* eslint-disable no-undef */
 var express = require("express");
 const {Pool} = require("pg");
 var MapboxClient = require("mapbox");
 
 var app = express();
-app.listen(3000, () => {
- console.log("Server running on port 3000");
+app.listen(9000, () => {
+ console.log("Server running on port 9000");
 });
 
 // app.get("/areas", (req, res, next) => {
@@ -28,11 +29,11 @@ const pool = new Pool({
   port: "5432"
 });
 
-app.get("/locations", (req, res, next) => {
-   areaname = req.query.name;
+app.get("/locations", (req, res) => {
+   const areaname = req.query.name;
   // console.log("1");
 
-  ;(async function() {
+  (async function() {
     const client = await pool.connect()
     const query = 'SELECT * FROM truck_data WHERE area = $1'
     const value = [areaname]
@@ -48,24 +49,36 @@ app.get("/locations", (req, res, next) => {
 });
 
 async function func_getDistance(lat1, long1, lat2, long2){
-  var R = 6371; // km
-  var dLat = (lat2-lat1) * (Math.PI/180);;
-  var dLon = (long2-long1) * (Math.PI/180);;
-  var lat1 = lat1 * (Math.PI/180);;
-  var lat2 = lat2 * (Math.PI/180);;
+  const R = 6371; // km
+  const dLat = (lat2-lat1) * (Math.PI/180);
+  const dLon = (long2-long1) * (Math.PI/180);
+  const latitude1 = lat1 * (Math.PI/180);
+  const latitude2 = lat2 * (Math.PI/180);
 
   var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-    Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2); 
+    Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(latitude1) * Math.cos(latitude2); 
   var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
   var distance = R * c;
   console.log(distance + " km");
   return distance;
-};
-// func_getDistance(18.05,59,18,59);
+}
+func_getDistance(18.05,59,18,59);
 
-app.get("/trucks", (req, res, next) =>{
-  truckid = req.query.truckid;
-  truckaddress = req.query.address;
+async function func_truckInformation(truckid, res){
+  const client = await pool.connect()
+  const query = 'SELECT * FROM truck_data WHERE truckid = $1'
+  const value = [truckid]
+  const truckinformation = await client.query(query, value)
+  const newtruckinformation = truckinformation.rows.map(truck => {
+    return {"truckid": truck.truckid, 'truckname': truck.truckname, "menu": truck.menu, "opentime": truck.opentime, "closetime": truck.closetime, "foodtype": truck.foodtype, "vegan": truck.vegan};
+  })
+  res.json(newtruckinformation)
+  client.release()
+}
+
+app.get("/trucks", (req, res) =>{
+  const truckid = req.query.truckid;
+  const truckaddress = req.query.address;
   // truckvegan = req.query.vegan;
   // console.log(truckid);
 
@@ -82,31 +95,21 @@ app.get("/trucks", (req, res, next) =>{
     // res.json(newtruckinformation)
     // client.release()
     // })()
-async function func_truckInformation(){
-  const client = await pool.connect()
-    const query = 'SELECT * FROM truck_data WHERE truckid = $1'
-    const value = [truckid]
-    const truckinformation = await client.query(query, value)
-    const newtruckinformation = truckinformation.rows.map(truck => {
-      return {"truckid": truck.truckid, 'truckname': truck.truckname, "menu": truck.menu, "opentime": truck.opentime, "closetime": truck.closetime, "foodtype": truck.foodtype, "vegan": truck.vegan};
-    })
-    res.json(newtruckinformation)
-    client.release()
-  };
-  func_truckInformation();
+
+  func_truckInformation(truckid, res);
   } else if (truckaddress){
   //console.log(truckaddress);
   //console.log("1");
   var mapclient = new MapboxClient('pk.eyJ1IjoibWFwYm94c2giLCJhIjoiY2tlbnpzbmRxM2V3NjJ6bHQ0OGN6YmVzdiJ9.NrMbCzbdfJNuVJauavvztA');
 
   mapclient.geocodeForward(truckaddress).then(function(response){
-    data = response.entity;
+    const data = response.entity;
    // console.log(data);
-    var trucklocation_center = data.features[0].center;
-    var area_longitudemin = trucklocation_center[0]-0.0699;
-    var area_latitudemin = trucklocation_center[1]-0.0699;
-    var area_longitudemax = trucklocation_center[0]+0.0699;
-    var area_latitudemax = trucklocation_center[1]+0.0699;
+    const trucklocation_center = data.features[0].center;
+    const area_longitudemin = trucklocation_center[0]-0.05;
+    const area_latitudemin = trucklocation_center[1]-0.05;
+    const area_longitudemax = trucklocation_center[0]+0.05;
+    const area_latitudemax = trucklocation_center[1]+0.05;
    // console.log("trucklocation_center=");
   // console.log(trucklocation_center);
     //console.log(area_lantitudemin);
@@ -128,7 +131,7 @@ async function func_truckInformation(){
          // console.log("truckinformation:")
          // console.log(trucklistinthearea)
          client.release()
-     };
+     }
      func_truckList();
 
   });
