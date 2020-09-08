@@ -2,6 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import mapboxgl from 'mapbox-gl';
+// import MapboxGeocoder from 'mapbox-gl';
+import * as MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
 
 mapboxgl.accessToken = 'pk.eyJ1IjoibWFwYm94c2giLCJhIjoiY2tlbnpzbmRxM2V3NjJ6bHQ0OGN6YmVzdiJ9.NrMbCzbdfJNuVJauavvztA';
 
@@ -10,9 +12,9 @@ class Application extends React.Component {
     constructor(props) {
       super(props);
       this.state = {
-        lng: 5,
-        lat: 34,
-        zoom: 2
+        lng: 18.059387,
+        lat: 59.337169,
+        zoom: 12
       };
     }
     componentDidMount() {
@@ -20,8 +22,22 @@ class Application extends React.Component {
         container: this.mapContainer,
         style: 'mapbox://styles/mapbox/streets-v11',
         center: [this.state.lng, this.state.lat],
+        //center: [18.068924, 59.346768],
         zoom: this.state.zoom
       });
+
+      // map.addControl(
+      //   new mapboxgl.GeolocateControl({
+      //       positionOptions: {
+      //           enableHighAccuracy: true
+      //       },
+      //       trackUserLocation: true
+      //   })
+      // );
+
+      // new mapboxgl.Marker()
+      // .setLngLat([this.state.lng, this.state.lat])
+      // .addTo(map);
 
       map.on('move', () => {
         this.setState({
@@ -30,7 +46,68 @@ class Application extends React.Component {
           zoom: map.getZoom().toFixed(2)
         });
       });
+
+        /* given a query in the form "lng, lat" or "lat, lng" returns the matching
+     * geographic coordinate(s) as search results in carmen geojson format,
+     * https://github.com/mapbox/carmen/blob/master/carmen-geojson.md
+     */
+    var coordinatesGeocoder = function(query) {
+      // match anything which looks like a decimal degrees coordinate pair
+      var matches = query.match(
+          /^[ ]*(?:Lat: )?(-?\d+\.?\d*)[, ]+(?:Lng: )?(-?\d+\.?\d*)[ ]*$/i
+      );
+      if (!matches) {
+          return null;
+      }
+
+      function coordinateFeature(lng, lat) {
+          return {
+              center: [lng, lat],
+              geometry: {
+                  type: 'Point',
+                  coordinates: [lng, lat]
+              },
+              place_name: 'Lat: ' + lat + ' Lng: ' + lng,
+              place_type: ['coordinate'],
+              properties: {},
+              type: 'Feature'
+          };
+      }
+
+      var coord1 = Number(matches[1]);
+      var coord2 = Number(matches[2]);
+      var geocodes = [];
+
+      if (coord1 < -90 || coord1 > 90) {
+          // must be lng, lat
+          geocodes.push(coordinateFeature(coord1, coord2));
+      }
+
+      if (coord2 < -90 || coord2 > 90) {
+          // must be lat, lng
+          geocodes.push(coordinateFeature(coord2, coord1));
+      }
+
+      if (geocodes.length === 0) {
+          // else could be either lng, lat or lat, lng
+          geocodes.push(coordinateFeature(coord1, coord2));
+          geocodes.push(coordinateFeature(coord2, coord1));
+      }
+
+      return geocodes;
+  };
+
+      map.addControl(
+        new MapboxGeocoder({
+              accessToken: mapboxgl.accessToken,
+              localGeocoder: coordinatesGeocoder,
+              zoom: 12,
+              placeholder: 'Try: odengatan 55',
+              mapboxgl: mapboxgl
+          })
+      );
     }
+
     render() {
       return (
         <div>
