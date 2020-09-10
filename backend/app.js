@@ -29,9 +29,9 @@ const pool = new Pool({
   port: "5432"
 });
 
+// this is endpoint to fetch the info of trucks in an area
 app.get("/locations", (req, res) => {
    const areaname = req.query.name;
-  // console.log("1");
 
   (async function() {
     const client = await pool.connect()
@@ -76,43 +76,23 @@ async function func_truckInformation(truckid, res){
   client.release()
 }
 
+// this is endpoint to fetch the info of one truck, truck list near me
 app.get("/trucks", (req, res) =>{
   const truckid = req.query.truckid;
   const truckaddress = req.query.address;
-  // truckvegan = req.query.vegan;
-  // console.log(truckid);
 
   if (truckid) {
-   // console.log("0");
-    // ;(async function(){
-    //   const client = await pool.connect()
-    //   const query = 'SELECT * FROM truck_data WHERE truckid = $1'
-    //   const value = [truckid]
-    //   const truckinformation = await client.query(query, value)
-    //   const newtruckinformation = truckinformation.rows.map(truck => {
-    //     return {"truckid": truck.truckid, 'truckname': truck.truckname, "menu": truck.menu, "opentime": truck.opentime, "closetime": truck.closetime, "foodtype": truck.foodtype, "vegan": truck.vegan};
-    //   })
-    // res.json(newtruckinformation)
-    // client.release()
-    // })()
-
   func_truckInformation(truckid, res);
   } else if (truckaddress){
-  //console.log(truckaddress);
-  //console.log("1");
   var mapclient = new MapboxClient('pk.eyJ1IjoibWFwYm94c2giLCJhIjoiY2tlbnpzbmRxM2V3NjJ6bHQ0OGN6YmVzdiJ9.NrMbCzbdfJNuVJauavvztA');
 
   mapclient.geocodeForward(truckaddress).then(function(response){
     const data = response.entity;
-   // console.log(data);
     const trucklocation_center = data.features[0].center;
     const area_longitudemin = trucklocation_center[0]-0.05;
     const area_latitudemin = trucklocation_center[1]-0.05;
     const area_longitudemax = trucklocation_center[0]+0.05;
     const area_latitudemax = trucklocation_center[1]+0.05;
-   // console.log("trucklocation_center=");
-  // console.log(trucklocation_center);
-    //console.log(area_lantitudemin);
 
      async function func_truckList(){
        const client = await pool.connect()
@@ -121,15 +101,14 @@ app.get("/trucks", (req, res) =>{
       // const truckinformation = await client.query(query, value_longitudemin, value_longitudemax, value_lantitudemin, value_lantitudemax)
        const truckinformation = await client.query(query, values)
        var distance = distance
-
+       // console.log(truckinformation)
        const trucklistinthearea = truckinformation.rows.map(truck => {
           return {"truckid": truck.truckid, 'truckname': truck.truckname, "menu": truck.menu, "opentime": truck.opentime, "closetime": truck.closetime, "longitude": truck.longtitude, "latitude": truck.latitude, "foodtype": truck.foodtype, "vegan": truck.vegan, "distance": distance};
-         })
+        })
+
          res.json(trucklistinthearea)
          console.log("my location:")
          console.log(trucklocation_center)
-         // console.log("truckinformation:")
-         // console.log(trucklistinthearea)
          client.release()
      }
      func_truckList();
