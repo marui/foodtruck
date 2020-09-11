@@ -1,46 +1,23 @@
 function getTrucks(){
-    return fetch("/trucks?address=")
+    return fetch("http://localhost:9000/trucks")
       .then(handleErrors)
       .then(res => res.json());
 }
 
-// function fakeGetTrucks(){
-//     return new Promise(resolve => {
-//         setTimeout(
-//             () =>
-//                 resolve(
-//                     {
-//                         trucks:[
-//                             {
-//                                 id:0,
-//                                 name:"Apple"
-//                         },
-//                         {
-//                             id:1,
-//                             name:"Pear"
-//                          }
-//                         ]
-//                     }
-//                 )
-//         )
-
-//     }
-
-
-//     )
-
+// function getTrucksbyId(truckid){
+//     return fetch("http://localhost:9000/trucks?truckid=$??")
+//       .then(handleErrors)
+//       .then(res => res.json());
 // }
 
 export function fetchTrucks(){
     return dispatch => {
         dispatch(fetchTrucksBegin());
         return getTrucks()
-          //  .then(handleErrors)
-          //  .then(res => res.json())
             .then(json => {
-                dispatch(fetchTrucksSuccess(json.trucks));
-                console.log("200");
-                return json.trucks;
+                dispatch(fetchTrucksSuccess(json));
+                console.log(json);
+                return json;
             })
             .catch(error => dispatch(fetchTrucksFailure(error)));
     };

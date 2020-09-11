@@ -91,15 +91,15 @@ class Map extends React.Component {
   };
 
       const newLocal = 'Search';
-      map.addControl(
-        new MapboxGeocoder({
-              accessToken: mapboxgl.accessToken,
-              localGeocoder: coordinatesGeocoder,
-              zoom: 12,
-              placeholder: newLocal,
-              mapboxgl: mapboxgl
-          })
-      );
+      var geocoder = new MapboxGeocoder({
+        accessToken: mapboxgl.accessToken,
+        localGeocoder: coordinatesGeocoder,
+        className:"geocoderStyle",
+        zoom: 12,
+        placeholder: newLocal,
+        mapboxgl: mapboxgl
+    });
+      map.addControl(geocoder);
     }
 
     render() {
