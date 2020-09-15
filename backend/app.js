@@ -8,18 +8,12 @@ app.listen(9000, () => {
  console.log("Server running on port 9000");
 });
 
-// app.get("/areas", (req, res, next) => {
-//   let areaname = req.query.name;
-// let areas = [
-//   {'name':"södermalm",'keyword':"hipster"},
-//   {'name':"östermalm",'keyword':"douche bag"},
-//   {'name':"gamlastan",'keyword':"old town"}]
-
-//  // res.json(areas);
-// let results = areas.filter(area => area.name === areaname)
-
-// res.json(results);
-// });
+let allowCrossDomain = function(req, res, next) {
+  res.header('Access-Control-Allow-Origin', "*");
+  res.header('Access-Control-Allow-Headers', "*");
+  next();
+}
+app.use(allowCrossDomain);
 
 const pool = new Pool({
   user: "wanderlust",
@@ -27,25 +21,6 @@ const pool = new Pool({
   database: "foodtruck_database",
   password: "",
   port: "5432"
-});
-
-// this is endpoint to fetch the info of trucks in an area
-app.get("/locations", (req, res) => {
-   const areaname = req.query.name;
-
-  (async function() {
-    const client = await pool.connect()
-    const query = 'SELECT * FROM truck_data WHERE area = $1'
-    const value = [areaname]
-    const trucklist = await client.query(query, value)
-    const newtrucklist = trucklist.rows.map(truck => {
-      return {"truckid":truck.truckid, 'truckname':truck.truckname };
-    })
-    res.json(newtrucklist)
-    client.release()
-  })()
-
-
 });
 
 async function func_getDistance(lat1, long1, lat2, long2){
@@ -59,12 +34,24 @@ async function func_getDistance(lat1, long1, lat2, long2){
     Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(latitude1) * Math.cos(latitude2); 
   var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
   var distance = R * c;
-  console.log(distance + " km");
+ // console.log(distance + " km");
   return distance;
 }
+
 func_getDistance(18.05,59,18,59);
 
-async function func_truckInformation(truckid, res){
+async function func_getTrucks(res){
+  const client = await pool.connect()
+  const query = 'SELECT * FROM truck_data'
+  const trucks = await client.query(query)
+  const newtrucks = trucks.rows.map(truck => {
+    return {"truckid": truck.truckid, 'truckname': truck.truckname, "menu": truck.menu, "opentime": truck.opentime, "closetime": truck.closetime, "foodtype": truck.foodtype, "vegan": truck.vegan, "latitude": truck.latitude, "longitude": truck.longitude };
+  })
+  res.json(newtrucks)
+  client.release()
+}
+
+async function func_getTruckByTruckId(truckid, res){
   const client = await pool.connect()
   const query = 'SELECT * FROM truck_data WHERE truckid = $1'
   const value = [truckid]
@@ -82,7 +69,7 @@ app.get("/trucks", (req, res) =>{
   const truckaddress = req.query.address;
 
   if (truckid) {
-  func_truckInformation(truckid, res);
+    func_getTruckByTruckId(truckid, res);
   } else if (truckaddress){
   var mapclient = new MapboxClient('pk.eyJ1IjoibWFwYm94c2giLCJhIjoiY2tlbnpzbmRxM2V3NjJ6bHQ0OGN6YmVzdiJ9.NrMbCzbdfJNuVJauavvztA');
 
@@ -97,13 +84,13 @@ app.get("/trucks", (req, res) =>{
      async function func_truckList(){
        const client = await pool.connect()
        const values = [area_longitudemin, area_longitudemax, area_latitudemin, area_latitudemax]
-       const query = 'SELECT * FROM truck_data WHERE longtitude BETWEEN $1 AND $2 AND latitude BETWEEN $3 AND $4'
+       const query = 'SELECT * FROM truck_data WHERE longitude BETWEEN $1 AND $2 AND latitude BETWEEN $3 AND $4'
       // const truckinformation = await client.query(query, value_longitudemin, value_longitudemax, value_lantitudemin, value_lantitudemax)
        const truckinformation = await client.query(query, values)
        var distance = distance
        // console.log(truckinformation)
        const trucklistinthearea = truckinformation.rows.map(truck => {
-          return {"truckid": truck.truckid, 'truckname': truck.truckname, "menu": truck.menu, "opentime": truck.opentime, "closetime": truck.closetime, "longitude": truck.longtitude, "latitude": truck.latitude, "foodtype": truck.foodtype, "vegan": truck.vegan, "distance": distance};
+          return {"truckid": truck.truckid, 'truckname': truck.truckname, "menu": truck.menu, "opentime": truck.opentime, "closetime": truck.closetime, "longitude": truck.longitude, "latitude": truck.latitude, "foodtype": truck.foodtype, "vegan": truck.vegan, "distance": distance};
         })
 
          res.json(trucklistinthearea)
@@ -112,8 +99,9 @@ app.get("/trucks", (req, res) =>{
          client.release()
      }
      func_truckList();
-
   });
+  } else {
+    func_getTrucks(res);
   }
 
 });

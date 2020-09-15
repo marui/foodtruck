@@ -1,12 +1,14 @@
 import React from "react";
 import { connect } from "react-redux";
 import { fetchTrucks } from "./TruckActions";
+import PropTypes from 'prop-types';
+import { TruckCard } from './TruckCard/TruckCard';
+import { DropdownButton, Dropdown } from 'react-bootstrap';
 
 class TruckList extends React.Component {
   componentDidMount(){
     console.log("didMount");
     this.props.dispatch(fetchTrucks());
-
   }
 
   render(){
@@ -23,21 +25,38 @@ class TruckList extends React.Component {
     }
 
     return (
-      <>
+      
       <div className="listContainer">
-        <h1>Find foodtrucks near by </h1>
+        <DropdownButton id="dropdown-basic-button" title="Sort by" className="Sorting">
+            <Dropdown.Item href="#/action-1">Price</Dropdown.Item>
+            <Dropdown.Item href="#/action-2">Distance</Dropdown.Item>
+        </DropdownButton>
         <div className="truckList">
-          <div className="trucks">
               { trucks.map((truck) => 
-              <div key={truck.truckid}> {truck.truckname}{truck.menu} </div>
+              <TruckCard key={truck.truckid}{...truck} />
+             // <div key={truck.truckid}> {truck.truckname}{truck.menu} </div>
               )}
-          </div>
         </div>
       </div>
-     </>
+     
     );
   }
 }
+
+TruckList.propTypes = {
+  trucks: PropTypes.arrayOf(
+    PropTypes.shape({
+      truckname: PropTypes.string.isRequired,
+      menu: PropTypes.string.isRequired,
+      foodtype:PropTypes.string.isRequired,
+      opentime: PropTypes.number.isRequired,
+      closetime:PropTypes.number.isRequired,
+      latitude: PropTypes.string.isRequired,
+      longitude: PropTypes.string.isRequired
+    }),
+  ),
+};
+
 
 const mapStateToProps = state => ({
   trucks: state.trucks.items,

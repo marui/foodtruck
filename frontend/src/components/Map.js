@@ -1,6 +1,7 @@
 import React from 'react';
 import mapboxgl from 'mapbox-gl';
 import * as MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
+//import customData from './TruckList';
 
 mapboxgl.accessToken = 'pk.eyJ1IjoibWFwYm94c2giLCJhIjoiY2tlbnpzbmRxM2V3NjJ6bHQ0OGN6YmVzdiJ9.NrMbCzbdfJNuVJauavvztA';
 
@@ -14,6 +15,7 @@ class Map extends React.Component {
         zoom: 12
       };
     }
+
     componentDidMount() {
       const map = new mapboxgl.Map({
         container: this.mapContainer,
@@ -40,16 +42,42 @@ class Map extends React.Component {
         });
       });
 
+    
+      // function forwardGeocoder(query) {
+      //   var matchingFeatures = [];
+      //   for (var i = 0; i < customData.features.length; i++) {
+      //   var feature = customData.features[i];
+      //   // handle queries with different capitalization than the source data by calling toLowerCase()
+      //   if (
+      //   feature.properties.title
+      //   .toLowerCase()
+      //   .search(query.toLowerCase()) !== -1
+      //   ) {
+      //   // add a tree emoji as a prefix for custom data results
+      //   // using carmen geojson format: https://github.com/mapbox/carmen/blob/master/carmen-geojson.md
+      //   feature['place_name'] = '🌲 ' + feature.properties.title;
+      //   feature['center'] = feature.geometry.coordinates;
+      //   feature['place_type'] = ['park'];
+      //   matchingFeatures.push(feature);
+      //   }
+      //   }
+      //   return matchingFeatures;
+      //   }
+
         /* given a query in the form "lng, lat" or "lat, lng" returns the matching
      * geographic coordinate(s) as search results in carmen geojson format,
      * https://github.com/mapbox/carmen/blob/master/carmen-geojson.md
      */
+
+    
     var coordinatesGeocoder = function(query) {
       // match anything which looks like a decimal degrees coordinate pair
       var matches = query.match(
           /^[ ]*(?:Lat: )?(-?\d+\.?\d*)[, ]+(?:Lng: )?(-?\d+\.?\d*)[ ]*$/i
       );
-      if (!matches) {
+      if (matches){
+          return matches;
+      } else {
           return null;
       }
 
@@ -94,6 +122,7 @@ class Map extends React.Component {
       var geocoder = new MapboxGeocoder({
         accessToken: mapboxgl.accessToken,
         localGeocoder: coordinatesGeocoder,
+        //localGeocoder: forwardGeocoder,
         className:"geocoderStyle",
         zoom: 12,
         placeholder: newLocal,
@@ -105,9 +134,9 @@ class Map extends React.Component {
     render() {
       return (
         <div>
-          <div className='sidebarStyle'>
+          {/* <div className="mapView">
             <div>Longitude: {this.state.lng} | Latitude: {this.state.lat} | Zoom: {this.state.zoom}</div>
-          </div>
+          </div> */}
           <div ref={el => this.mapContainer = el} className='mapContainer' />
         </div>
       )
