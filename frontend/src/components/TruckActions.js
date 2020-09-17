@@ -4,12 +4,6 @@ function getTrucks(){
       .then(res => res.json());
 }
 
-// function getTrucksbyId(truckid){
-//     return fetch("http://localhost:9000/trucks?truckid=$??")
-//       .then(handleErrors)
-//       .then(res => res.json());
-// }
-
 export function fetchTrucks(){
     return dispatch => {
         dispatch(fetchTrucksBegin());

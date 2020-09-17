@@ -1,17 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import './TruckCard.css';
-import { Card, Button } from 'react-bootstrap';
+import { Card } from 'react-bootstrap';
 
-export const TruckCard = ({ truckname, menu, foodtype, opentime, closetime, latitude, longitude }) => (
-      <Card className="text-center" style={{ width: '100%' }}>
+export const TruckCard = ({ truckname, menu, foodtype, opentime, closetime, latitude, longitude, handleShowMenuClick }) => (
+    <Card className="text-center" style={{ width: '100%' }}>
         <Card.Header>{truckname}</Card.Header>
         <Card.Body>
-          <Card.Title>{foodtype}</Card.Title>
+          <Card.Title id="foodtype">{foodtype}</Card.Title>
           <Card.Text>
-              <label>Menu: </label>
-              <br />
-              {menu}
               <br /><br />
               <label>Opening hours: </label>
               <br />
@@ -20,36 +17,19 @@ export const TruckCard = ({ truckname, menu, foodtype, opentime, closetime, lati
               <label>Location Coordinates: </label>
               <br />
               {latitude},{longitude}
-              <br /><br />
+              <br />
+              <br />
+             
+              <div id="truckmenu" className="Truckmenu">Menu: {menu} </div>
+              {this.isMenuShown ? <div id="truckmenu">Menu: {menu} </div> : null}
+
+              <br />
           </Card.Text>
-          <Button variant="primary" href="" >Direct me</Button>
+          <button onClick={this.handleShowMenuClick}>{this.state.isMenuShown ? 'ON' : 'OFF'}</button>
           <br />
-          <Button variant="primary" href="" >Share</Button>
         </Card.Body>
         <Card.Footer className="text-muted">2 days ago</Card.Footer>
       </Card>
-
-  // <div className="card">
-  //   <div className="card-content">
-  //       <div className="media-content">
-  //         <p className="title is-8">{truckname}</p>
-  //       </div>
-  //     <div className="content">
-  //       <label>Menu: </label>
-  //       {menu}
-  //       <br />
-  //       <label>Food Type: </label>
-  //       {foodtype}
-  //       <br />
-  //       <label>Opening hours: </label>
-  //       {opentime}-{closetime}
-  //       <br />
-  //       <label>Location Coordinates: </label>
-  //       {latitude},{longitude}
-  //       <br />
-  //     </div>
-  //   </div>
-  // </div>
 );
 
 TruckCard.propTypes = {

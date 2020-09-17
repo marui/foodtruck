@@ -128,7 +128,9 @@ class Map extends React.Component {
         placeholder: newLocal,
         mapboxgl: mapboxgl
     });
-      map.addControl(geocoder);
+      
+      //document.getElementById('geocoder').appendChild(geocoder.onAdd(map));
+      //map.addControl(geocoder);
     }
 
     render() {

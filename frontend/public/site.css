@@ -1,3 +1,5 @@
+/* Map CSS */
+
 .mapContainer {
 /* position: absolute;
 top:0;
@@ -19,14 +21,15 @@ height:40vh;
   font-weight: bold;
   }
 
+.geocoderStyle{
+    width: 80%;
+  }
+
+/* Trucklist CSS */
 .listContainer{
  position: relative;
  margin: 20px;
  color: #000000;
-}
-
-.geocoderStyle{
- width: 80%;
 }
 
 .truckList{
@@ -47,3 +50,22 @@ height:40vh;
 .btn{
   margin-bottom: 5px;
 }
+
+/* Geocoding CSS */
+
+.geocoder {
+  position: absolute;
+  z-index: 1;
+  width: 50%;
+  left: 50%;
+  margin-left: -25%;
+  top: 10px;
+  }
+
+.mapboxgl-ctrl-geocoder {
+  min-width: 100%;
+}
+  
+#map {
+  margin-top: 75px;
+  }

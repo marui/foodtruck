@@ -3,9 +3,33 @@ import { connect } from "react-redux";
 import { fetchTrucks } from "./TruckActions";
 import PropTypes from 'prop-types';
 import { TruckCard } from './TruckCard/TruckCard';
-import { DropdownButton, Dropdown } from 'react-bootstrap';
+import { Button, DropdownButton, Dropdown } from 'react-bootstrap';
 
 class TruckList extends React.Component {
+  constructor(props) {
+    super(props);
+    //this.state = {isToggleOn: true, isMenuShown: false};
+    this.state = {isToggleOn: true, isMenuShown: false};
+    console.log("constructor");
+    // This binding is necessary to make `this` work in the callback
+    this.handleClick = this.handleClick.bind(this);
+    this.handleShowMenuClick = this.handleShowMenuClick.bind(this);
+  }
+
+  handleClick() {
+    console.log("handleClick");
+    this.setState(state => ({
+      isToggleOn: !state.isToggleOn
+    }));
+  }
+
+  handleShowMenuClick() { 
+    console.log("handleShowMenuClick happens");
+     this.setState(state => ({
+       isMenuShown: !state.isMenuShown
+     }));
+   }
+
   componentDidMount(){
     console.log("didMount");
     this.props.dispatch(fetchTrucks());
@@ -15,6 +39,14 @@ class TruckList extends React.Component {
     const { error, loading, trucks} = this.props;
     console.log("render trucklist");
     console.log(trucks);
+
+
+  function truckCard(trucks){
+    return(
+      console.log("trucks-list:", trucks)
+    )
+  }
+
     if(error){
       return <div> Error! {error.message}</div>;
     }
@@ -27,16 +59,27 @@ class TruckList extends React.Component {
     return (
       
       <div className="listContainer">
-        <DropdownButton id="dropdown-basic-button" title="Sort by" className="Sorting">
-            <Dropdown.Item href="#/action-1">Price</Dropdown.Item>
-            <Dropdown.Item href="#/action-2">Distance</Dropdown.Item>
-        </DropdownButton>
-        <div className="truckList">
-              { trucks.map((truck) => 
-              <TruckCard key={truck.truckid}{...truck} />
-             // <div key={truck.truckid}> {truck.truckname}{truck.menu} </div>
-              )}
-        </div>
+        {/* <DropdownButton id="dropdown-basic-button" title="Sort by" className="Sorting">
+            <Dropdown.Item OnClick={this.handleChanges}>Name</Dropdown.Item>
+        </DropdownButton> */}
+          <button onClick={this.handleClick}>
+            {this.state.isToggleOn ? 'Vegan only' : 'All'}
+          </button>
+          <div className="truckList">
+                { trucks.map((truck) => {
+                            console.log(this.state.isToggleOn);
+                    if(this.state.isToggleOn === true && truck.foodtype === 'burger'){
+                     
+                      return (
+                         <div>               
+                          <TruckCard key={truck.truckid}{...truck} /> 
+                        </div>
+                    )
+                        
+                      } 
+                  }        
+                )}
+          </div>
       </div>
      
     );
