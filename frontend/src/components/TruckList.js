@@ -2,7 +2,7 @@ import React from "react";
 import { connect } from "react-redux";
 import { fetchTrucks } from "./TruckActions";
 import PropTypes from 'prop-types';
-import { TruckCard } from './TruckCard/TruckCard';
+import  TruckCard from './TruckCard/TruckCard';
 import { Button, DropdownButton, Dropdown } from 'react-bootstrap';
 
 class TruckList extends React.Component {
@@ -13,7 +13,6 @@ class TruckList extends React.Component {
     console.log("constructor");
     // This binding is necessary to make `this` work in the callback
     this.handleClick = this.handleClick.bind(this);
-    this.handleShowMenuClick = this.handleShowMenuClick.bind(this);
   }
 
   handleClick() {
@@ -22,13 +21,6 @@ class TruckList extends React.Component {
       isToggleOn: !state.isToggleOn
     }));
   }
-
-  handleShowMenuClick() { 
-    console.log("handleShowMenuClick happens");
-     this.setState(state => ({
-       isMenuShown: !state.isMenuShown
-     }));
-   }
 
   componentDidMount(){
     console.log("didMount");
@@ -59,20 +51,20 @@ class TruckList extends React.Component {
     return (
       
       <div className="listContainer">
-        {/* <DropdownButton id="dropdown-basic-button" title="Sort by" className="Sorting">
-            <Dropdown.Item OnClick={this.handleChanges}>Name</Dropdown.Item>
-        </DropdownButton> */}
-          <button onClick={this.handleClick}>
-            {this.state.isToggleOn ? 'Vegan only' : 'All'}
+        <DropdownButton id="dropdown-basic-button" title="Sort by" className="Sorting">
+            <Dropdown.Item>Name</Dropdown.Item>
+        </DropdownButton> 
+          
+          <button className="listButton" onClick={this.handleClick}>
+            {this.state.isToggleOn ? 'Falafel Trucks only' : 'All Trucks'}
           </button>
           <div className="truckList">
                 { trucks.map((truck) => {
-                            console.log(this.state.isToggleOn);
-                    if(this.state.isToggleOn === true && truck.foodtype === 'burger'){
-                     
+                    //console.log(this.state.isToggleOn);
+                    if(this.state.isToggleOn === true || truck.foodtype === 'falafel'){
                       return (
                          <div>               
-                          <TruckCard key={truck.truckid}{...truck} /> 
+                          <TruckCard key={truck.truckid}{...truck} value={this.state.isMenuShown} /> 
                         </div>
                     )
                         

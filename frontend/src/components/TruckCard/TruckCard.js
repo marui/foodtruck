@@ -1,45 +1,53 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import './TruckCard.css';
-import { Card } from 'react-bootstrap';
 
-export const TruckCard = ({ truckname, menu, foodtype, opentime, closetime, latitude, longitude, handleShowMenuClick }) => (
-    <Card className="text-center" style={{ width: '100%' }}>
-        <Card.Header>{truckname}</Card.Header>
-        <Card.Body>
-          <Card.Title id="foodtype">{foodtype}</Card.Title>
-          <Card.Text>
-              <br /><br />
-              <label>Opening hours: </label>
-              <br />
-              {opentime}-{closetime}
-              <br /><br />
-              <label>Location Coordinates: </label>
-              <br />
-              {latitude},{longitude}
-              <br />
-              <br />
-             
-              <div id="truckmenu" className="Truckmenu">Menu: {menu} </div>
-              {this.isMenuShown ? <div id="truckmenu">Menu: {menu} </div> : null}
+class TruckCard extends React.Component {
+  constructor(props) {
+    super(props);    
+    this.state = {isMenuShown: false};
+    console.log(this.state.isMenuShown);
+    // This binding is necessary to make `this` work in the callback
+    this.handleShowMenuClick = this.handleShowMenuClick.bind(this);
+  };
 
+  handleShowMenuClick() { 
+    console.log("handleShowMenuClick happens");
+     this.setState(state => ({
+       isMenuShown: !state.isMenuShown
+     }));
+   }
+
+  render() {
+
+    return(
+    
+      <div className="text-center">      
+        <div className="Truckcard" style={{ width: '100%' }}>
+              <label>{this.props.truckname}</label>
               <br />
-          </Card.Text>
-          <button onClick={this.handleShowMenuClick}>{this.state.isMenuShown ? 'ON' : 'OFF'}</button>
-          <br />
-        </Card.Body>
-        <Card.Footer className="text-muted">2 days ago</Card.Footer>
-      </Card>
-);
+              <label id="foodtype">{this.props.foodtype}</label>
+                    <br /><br />
+                    <label>Opening hours: </label>
+                    <br />
+                    {this.props.opentime}-{this.props.closetime}
+                    <br /><br />
+                    <label>Location Coordinates: </label>
+                    <br />
+                    {this.props.latitude},{this.props.longitude}
+                    <br />
+                    <br />
+                    {this.state.isMenuShown ? <div id="truckmenu">Menu: {this.props.menu} </div> : null}
+                    {/* <div id="truckmenu">Menu: {trucks.menu} </div> */}
+                    <br />
+                    <button className="cardButton" onClick={this.handleShowMenuClick}>
+                    {this.state.isMenuShown ? 'Hide menu' : 'Show menu'}</button>                
+          </div>
+      </div>
+    );
+    
+    }
+}
 
-TruckCard.propTypes = {
-  truckname: PropTypes.string.isRequired,
-  menu: PropTypes.string,
-  foodtype:PropTypes.string,
-  latitude: PropTypes.string.isRequired,
-  longitude: PropTypes.string.isRequired
-};
 
-TruckCard.defaultProps = {
-  description: '',
-};
+export default TruckCard;

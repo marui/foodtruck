@@ -1,4 +1,6 @@
-.card {
+.Truckcard {
  margin:10px;
+ padding:20px;
+ background-color: #efefef;
  width:100%;
 }
