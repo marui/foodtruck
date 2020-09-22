@@ -1,7 +1,7 @@
 function getTrucks(){
     return fetch("http://localhost:9000/trucks")
-      .then(handleErrors)
-      .then(res => res.json());
+        .then(handleErrors)
+        .then(res => res.json());
 }
 
 export function fetchTrucks(){

@@ -16,5 +16,6 @@
     "url": "https://github.com/marui/foodtruck/issues"
   },
   "homepage": "https://github.com/marui/foodtruck#readme",
-  "devDependencies": {}
+  "devDependencies": {
+  }
 }

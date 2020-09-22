@@ -6,11 +6,7 @@ import * as MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
 import GeocoderInSearch from '../GeocoderInSearch';
 
 
-
 class Search extends React.Component {
-
-
-
 
   render(){
       

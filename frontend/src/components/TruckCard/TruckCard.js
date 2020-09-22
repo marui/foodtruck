@@ -1,32 +1,32 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+//import PropTypes from 'prop-types';
 import './TruckCard.css';
 
 class TruckCard extends React.Component {
-  constructor(props) {
-    super(props);    
-    this.state = {isMenuShown: false};
-    console.log(this.state.isMenuShown);
-    // This binding is necessary to make `this` work in the callback
-    this.handleShowMenuClick = this.handleShowMenuClick.bind(this);
-  };
+    constructor(props) {
+        super(props);    
+        //this.state = {isMenuShown: false};
+        console.log(this.state.isMenuShown);
+        // This binding is necessary to make `this` work in the callback
+        this.handleShowMenuClick = this.handleShowMenuClick.bind(this);
+    }
 
-  handleShowMenuClick() { 
-    console.log("handleShowMenuClick happens");
-     this.setState(state => ({
-       isMenuShown: !state.isMenuShown
-     }));
-   }
+    handleShowMenuClick() { 
+        console.log("handleShowMenuClick happens");
+        this.setState(state => ({
+            isMenuShown: !state.isMenuShown
+        }));
+    }
 
-  render() {
+    render() {
 
-    return(
+        return(
     
-      <div className="text-center">      
-        <div className="Truckcard" style={{ width: '100%' }}>
-              <label>{this.props.truckname}</label>
-              <br />
-              <label id="foodtype">{this.props.foodtype}</label>
+            <div className="text-center">      
+                <div className="Truckcard" style={{ width: '100%' }}>
+                    <label>{this.props.truckname}</label>
+                    <br />
+                    <label id="foodtype">{this.props.foodtype}</label>
                     <br /><br />
                     <label>Opening hours: </label>
                     <br />
@@ -41,10 +41,10 @@ class TruckCard extends React.Component {
                     {/* <div id="truckmenu">Menu: {trucks.menu} </div> */}
                     <br />
                     <button className="cardButton" onClick={this.handleShowMenuClick}>
-                    {this.state.isMenuShown ? 'Hide menu' : 'Show menu'}</button>                
-          </div>
-      </div>
-    );
+                        {this.state.isMenuShown ? 'Hide menu' : 'Show menu'}</button>                
+                </div>
+            </div>
+        );
     
     }
 }

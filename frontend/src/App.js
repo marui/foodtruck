@@ -10,7 +10,7 @@ import Search from './components/Search/Search';
 import { Container, Row, Col} from 'react-bootstrap';
 
 export class App extends React.Component {
-  state ={};
+  state = {};
 
   render(){
     return (
@@ -29,7 +29,7 @@ export class App extends React.Component {
 
             <Col xs={4} md={4}>
               <Row className="RowSearch" >
-                {/* <Search trucks={TruckList} /> */}
+                {/* <Search /> */}
               </Row>
             </Col>
         </Row>

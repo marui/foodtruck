@@ -2,8 +2,44 @@
 var express = require("express");
 const {Pool} = require("pg");
 var MapboxClient = require("mapbox");
+// const cors = require('cors');
+// const logger = require('morgan');
 
 var app = express();
+
+// app.use(
+//  cors({
+//    origin: 'http://localhost:3000',
+//    credential: true,
+//  })
+// );
+
+// console.log("app.use cors address");
+
+// app.use(logger('dev'));
+// app.use(express.json());
+// app.use(express.urlencoded({extended: false}));
+
+// app.get('/trucks', function(req, res) {
+//   const address = req.query.address
+//   res.writeHead(200, {
+//     'Content-Type': 'application/json',
+//   });
+//   res.end(JSON.stringify(address));
+//   console.log("app.get address:" , address);
+
+// });
+
+// app.post('/trucks', function(req, res) {
+//   const newAddress = {
+//     Address: req.body.address,
+//   };
+
+//   address.push(newAddress);
+//   console.log(address);
+// });
+
+
 app.listen(9000, () => {
  console.log("Server running on port 9000");
 });
@@ -66,14 +102,14 @@ async function func_getTruckByTruckId(truckid, res){
 // this is endpoint to fetch the info of one truck, truck list near me
 app.get("/trucks", (req, res) =>{
   const truckid = req.query.truckid;
-  const truckaddress = req.query.address;
+  const myaddress = req.query.address;
 
   if (truckid) {
     func_getTruckByTruckId(truckid, res);
-  } else if (truckaddress){
+  } else if (myaddress){
   var mapclient = new MapboxClient('pk.eyJ1IjoibWFwYm94c2giLCJhIjoiY2tlbnpzbmRxM2V3NjJ6bHQ0OGN6YmVzdiJ9.NrMbCzbdfJNuVJauavvztA');
 
-  mapclient.geocodeForward(truckaddress).then(function(response){
+  mapclient.geocodeForward(myaddress).then(function(response){
     const data = response.entity;
     const trucklocation_center = data.features[0].center;
     const area_longitudemin = trucklocation_center[0]-0.05;
@@ -110,18 +146,18 @@ app.get("/trucks", (req, res) =>{
 
 
 // app.get("/trucks", (req, res2, next) =>{
-//   truckaddress = req.query.address;
-//   //console.log(truckaddress);
+//   myaddress = req.query.address;
+//   //console.log(myaddress);
 //  // console.log("1");
 
 //   var mapclient = new MapboxClient('pk.eyJ1IjoibWFwYm94c2giLCJhIjoiY2tlbnpzbmRxM2V3NjJ6bHQ0OGN6YmVzdiJ9.NrMbCzbdfJNuVJauavvztA');
 
-//   mapclient.geocodeForward(truckaddress).then(function(response){
+//   mapclient.geocodeForward(myaddress).then(function(response){
 //     data = response.entity;
 //    // console.log(data);
 //     var trucklocation_center = data.features[0].center;
 //   res2.json(trucklocation_center);
-//   //console.log(truckaddress);
+//   //console.log(myaddress);
 //   });
   
 //   });
