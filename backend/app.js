@@ -68,6 +68,8 @@ app.get("/trucks", (req, res) =>{
   const truckid = req.query.truckid;
   const truckaddress = req.query.address;
 
+  console.log("truckaddress", truckaddress);
+
   if (truckid) {
     func_getTruckByTruckId(truckid, res);
   } else if (truckaddress){
@@ -92,7 +94,7 @@ app.get("/trucks", (req, res) =>{
        const trucklistinthearea = truckinformation.rows.map(truck => {
           return {"truckid": truck.truckid, 'truckname': truck.truckname, "menu": truck.menu, "opentime": truck.opentime, "closetime": truck.closetime, "longitude": truck.longitude, "latitude": truck.latitude, "foodtype": truck.foodtype, "vegan": truck.vegan, "distance": distance};
         })
-
+        console.log("mylocation address", truckaddress);
          res.json(trucklistinthearea)
          console.log("my location:")
          console.log(trucklocation_center)

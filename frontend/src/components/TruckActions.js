@@ -1,12 +1,41 @@
 function getTrucks(){
     return fetch("http://localhost:9000/trucks")
-      .then(handleErrors)
-      .then(res => res.json());
+        .then(handleErrors)
+        .then(res => res.json());
 }
 
-export function fetchTrucks(){
+function getTrucksByAddress(address){
+    
+    var URL = "http://localhost:9000/trucks?address=" + address;
+
+    return fetch(URL, {
+        "method": "GET",
+        dataType: "JSON",
+        headers: {
+          "Content-Type": "application/json; charset=utf-8",
+        }
+    })
+         .then(json =>{
+             console.log("fetchtrucksbyaddress:", address);
+             return json;
+            })
+        .then(handleErrors)
+        .then(res => res.json());
+}
+
+export function fetchTrucks(address){
     return dispatch => {
         dispatch(fetchTrucksBegin());
+        if (address){
+            return getTrucksByAddress(address)
+                .then(json => {
+                    dispatch(fetchTrucksSuccess(json));
+                    console.log("fetchtrucks address:", address);
+                    console.log(json);
+                    return json;
+                })
+                .catch(error => dispatch(fetchTrucksFailure(error)));
+        }
         return getTrucks()
             .then(json => {
                 dispatch(fetchTrucksSuccess(json));
