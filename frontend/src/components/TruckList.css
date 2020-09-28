@@ -1,15 +1,29 @@
 .Formlabel{
  padding: 5px;
+ color: #555;
 }
 
 .FormInputField{
   padding: 5px;
+  color: #add8e6; 
+  border: 3px solid #add8e6;
+  border-radius: 10px;
 }
 
-.FormSubmitButton{
+.FormSelectInput{
+  border: 1px solid #add8e6;
+  border-radius: 10px;
+  color: #555;
+  font-size: 14px;
+  line-height: 18px;
+  padding: 5px;
+  margin: 0 5px;
+}
+
+.FormSubmitButton, .listButton{
   background-color: #add8e6; 
   border: none;
-  border-radius: 10 px;
+  border-radius: 10px;
   color:  #ffffff;
   padding: 5px 15px;
   margin: 0 10px;
@@ -17,4 +31,29 @@
   text-decoration: none;
   display: inline-block;
   font-size: 14px;
+}
+
+.viewButton{
+  position: relative;
+  float: right;
+  background-color: #add8e6; 
+  border: none;
+  border-radius: 10px;
+  color:  #ffffff;
+  padding: 5px 15px;
+  margin: 0 10px;
+  text-align: center;
+  text-decoration: none;
+  /* display: inline-block; */
+  font-size: 14px;
+}
+
+/* map */
+.mapContainer{
+  margin-top: 60px;
+}
+
+.mapvIEW{
+  height: 600px;
+
 }

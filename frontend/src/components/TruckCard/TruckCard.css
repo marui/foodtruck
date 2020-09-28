@@ -3,4 +3,18 @@
  padding:20px;
  background-color: #efefef;
  width:100%;
+ color:#555;
+}
+
+.cardButton{
+  background-color: #add8e6; 
+  border: none;
+  border-radius: 10 px;
+  color:  #ffffff;
+  padding: 5px 15px;
+  margin: 0 10px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 14px;
 }

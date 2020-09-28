@@ -85,7 +85,7 @@ app.get("/trucks", (req, res) =>{
 
      async function func_truckList(){
        const client = await pool.connect()
-       const values = [area_longitudemin, area_longitudemax, area_latitudemin, area_latitudemax]
+       const values = [area_longitudemin, area_longitudemax, area_latitudemin, area_latitudemax,truck_foodtype]
        const query = 'SELECT * FROM truck_data WHERE longitude BETWEEN $1 AND $2 AND latitude BETWEEN $3 AND $4'
       // const truckinformation = await client.query(query, value_longitudemin, value_longitudemax, value_lantitudemin, value_lantitudemax)
        const truckinformation = await client.query(query, values)
@@ -107,8 +107,6 @@ app.get("/trucks", (req, res) =>{
   }
 
 });
-
-
 
 
 // app.get("/trucks", (req, res2, next) =>{
