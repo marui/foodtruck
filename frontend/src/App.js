@@ -18,7 +18,7 @@ export class App extends React.Component {
         <h1 className="Heading"> Foodtruck Finder</h1>
         {/* Stack the columns on mobile by making one full-width and the other half-width */}
         <Row>
-            <Col  xs={8} md={8}>
+            <Col  xs={12} md={12}>
                     {/* <Map /> */}
                     {/* <MapWithGeocoder /> */}
                     {/* <TruckList trucks={TruckList} /> */}
@@ -26,12 +26,6 @@ export class App extends React.Component {
             </Col>
             
             {/* Columns start at 50% wide on mobile and bump up to 33.3% wide on desktop */}
-
-            <Col xs={4} md={4}>
-              <Row className="RowSearch" >
-                {/* <Search trucks={TruckList} /> */}
-              </Row>
-            </Col>
         </Row>
       </Container>
   //   <div className="page">

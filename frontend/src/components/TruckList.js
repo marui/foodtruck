@@ -56,8 +56,7 @@ class TruckList extends React.Component {
             <Dropdown.Item>Name</Dropdown.Item>
         </DropdownButton>  */}
                 <AddressSearchForm />
-          
-          
+                
                 <button className="listButton" onClick={this.handleClick}>
                     {this.state.isToggleOn ? 'Falafel Trucks only' : 'All Trucks'}
                 </button>

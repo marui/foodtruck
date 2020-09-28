@@ -129,10 +129,6 @@ app.get("/trucks", (req, res) =>{
 //   });
 
 
-
-
-
-
 // mapclient.geocodeForward('Odengatan 65, 113 22 Stockholm, Sweden')
 // .then(function(res){
 //       // res is the http response, including: status, headers and entity properties
